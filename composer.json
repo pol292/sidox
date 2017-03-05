@@ -1,0 +1,20 @@
+{
+    "name": "sidox/sidox",
+    "description": "Framework for small projects",
+    "type": "Framework",
+	"license": "MIT",
+	"keywords": ["csrf","tokken","security"],
+    "homepage": "https://github.com/pol292/sidox",
+    "authors": [
+        {
+            "name": "Pol",
+            "email": "pol292@gmail.com"
+        }
+    ],
+	"autoload": {
+        "psr-4": {
+            "core": "private/"
+        }
+    },
+    "require": {}
+}
