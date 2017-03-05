@@ -2,7 +2,12 @@
 
 namespace Sidox\Core;
 /**
- * This is constant of system interface
+ * ***************************************
+ *              Path interface           *
+ * This is constants of system interface *
+ * ***************************************
+ * @version 05/03/2017
+ * @author Pol Bogopolsky <pol292@gmail.com>
  */
 interface Path {
 
@@ -13,4 +18,3 @@ interface Path {
     const core = self::system . 'Core' . DS;
     const app = self::private_dir . 'Application' . DS;
 }
-
