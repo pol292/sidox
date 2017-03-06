@@ -2,19 +2,41 @@
 
 namespace Sidox\Core;
 
+/**
+ * *****************************************
+ *               Class Template            *
+ * This class load main template of system *
+ * *****************************************
+ * @version 06/03/2017
+ * @author Pol Bogopolsky <pol292@gmail.com>
+ */
 class Template {
     ############################################################################
     ####                          Static Methods                            ####
     ############################################################################
 
+    /**
+     * @var Template The template instance 
+     */
     private static $_instance;
 
     const PATH = Path::APP . 'Views' . DS . 'Layouts' . DS;
 
+    /**
+     * This method get first template
+     * @param typ $layout The layout name
+     * @return Template Return template instance
+     */
     public static function getTemplate( $layout ) {
         return self::singleton( $layout );
     }
 
+    /**
+     * This method get first template
+     * @param typ $layout The layout name
+     * @return Template Return template instance
+     * @private
+     */
     private static function singleton( $layout ) {
         if ( empty( self::$_instance ) ) {
             self::$_instance = new Template( $layout );
@@ -22,6 +44,11 @@ class Template {
         return self::$_instance;
     }
 
+    /**
+     * This method check if layout exists
+     * @param string $layout The layout for check
+     * @return string|null Return template if exsits or null
+     */
     private static function layoutExists( $layout ) {
 
         $template = NULL;
@@ -45,19 +72,38 @@ class Template {
     ####                          Object Methods                            ####
     ############################################################################
 
+    /**
+     * @var string The layout to use
+     */
     private $_layout;
+    /**
+     * @var array The var of template
+     */
     private $_vars = array();
 
+    /**
+     * This method init the template
+     * @param string $layout The layout name
+     */
     private function __construct( $layout ) {
         ob_start();
         $this->_layout = self::layoutExists( $layout );
     }
 
+    /**
+     * This method set other layout
+     * @param string $layout The layout to set
+     */
     public function setLayout( $layout ) {
         $this->_layout = layoutExists( $layout );
     }
 
-    private function replaceTemplate( string $content ) {
+    /**
+     * This method merge template with page
+     * @param string $content The content of page
+     * @return string New content
+     */
+    private function replaceTemplate( $content ) {
         $openTag  = Route::$confing[ 'setting' ][ 'varOpenTag' ];
         $closeTag = Route::$confing[ 'setting' ][ 'varCloseTag' ];
         foreach ( $this->_vars as $key => $value ) {
@@ -67,14 +113,27 @@ class Template {
         return $content;
     }
 
+    /**
+     * This method set new var for template
+     * @param string $name The name of var
+     * @param any $value The value of var
+     */
     public function __set( $name, $value ) {
         $this->_vars[ $name ] = $value;
     }
 
+    /**
+     * This method return the var
+     * @param string $name The name of var
+     * @return any The value of var
+     */
     public function __get( $name ) {
         return $this->_vars[ $name ];
     }
 
+    /**
+     * This method merge content of page with layout
+     */
     function __destruct() {
         $layout = self::PATH . $this->_layout;
 
