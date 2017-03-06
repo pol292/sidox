@@ -56,7 +56,7 @@ class View {
         $filePath = self::PATH . $filePath;
 
         if ( !is_dir( $filePath ) && file_exists( $filePath ) ) {
-            require_once($filePath);
+            include $filePath;
         }
     }
 
