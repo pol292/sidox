@@ -1,4 +1,6 @@
 /vendor/
 /nbproject/
-/Private/Application/
-!/Private/Application/README
+/Private/Application/Confings/
+/Private/Application/Controllers/
+/Private/Application/Models/
+/Private/Application/Views/
