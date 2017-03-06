@@ -12,7 +12,7 @@ namespace Sidox\Core;
  */
 abstract class Controller {
 
-    const PATH = Path::app . 'Controllers' . DS;
+    const PATH = Path::APP . 'Controllers' . DS;
 
     public function __construct() {
         View::init();

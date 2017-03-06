@@ -1,8 +1,12 @@
 <?php
 
 return array(
-    'defualt' => array(
+    'defualt' => [
         'controller' => 'main',
         'action'     => 'index',
-    )
+    ],
+    'alias' => [
+        'Sidox\Core\Controller' => 'Controller',
+        'Sidox\Core\View' => 'View'
+    ]
 );

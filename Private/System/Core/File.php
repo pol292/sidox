@@ -30,4 +30,17 @@ class File {
         return !file_exists( $path );
     }
 
+    /**
+     * This method shor load view files
+     * @param type $fileName The path to load
+     * @return string The file name to load
+     */
+    public static function shortLoad( $fileName ) {
+        $fileName = str_replace( "::", DS, $fileName );
+        //TODO: check extenstion
+        if ( !strpos ( $fileName , '.') ) {
+            $fileName .= '.php';
+        }
+        return $fileName;
+    }
 }

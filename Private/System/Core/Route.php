@@ -28,18 +28,20 @@ class Route {
      */
     public static function init( $conf = 'main' ) {
         // reqiure System conf
-        $sysConf = Path::core . '..' . DS . 'Confings' . DS . 'core.conf.php';
+        $sysConf = Path::CORE . '..' . DS . 'Confings' . DS . 'core.conf.php';
         if ( File::exsits( $sysConf ) ) {
             self::$confing = require_once($sysConf);
         }
 
-        $conf = Path::app . 'Confings' . DS . $conf . '.conf.php';
+        $conf = Path::APP . 'Confings' . DS . $conf . '.conf.php';
         if ( File::exsits( $conf ) ) {
-            self::$confing = array_merge( self::$confing, require_once($conf) );
+            self::$confing = array_merge( self::$confing, include_once($conf) );
         }
+
 
         self::cutUrl();
         self::createRouter();
+        self::createAlias();
         self::executeController();
     }
 
@@ -58,21 +60,24 @@ class Route {
 
         if ( File::notExsits( $controllerFile ) ) {
             self::executePage404( 'Controller File not found' );
-        } elseif ( !class_exists( $controller ) ) {
-            self::executePage404( 'Class not found' );
-        } elseif ( !method_exists( $controller, $action ) ) {
-            self::executePage404( 'Action not found' );
         } else {
-
-            $controller = new $controller();
-            if ( !($controller instanceof Controller) ) {
-                self::executePage404( 'This is Invalid Controller' );
-            } elseif ( self::$_request[ 'vars' ] === NULL ) {
-                $data = $controller->self::$action();
-            } elseif ( self::hasRequiredParameters( $controller ) ) {
-                $data = call_user_func_array( array( $controller, $action ), self::$_request[ 'vars' ] );
+            require $controllerFile;
+            if ( !class_exists( $controller ) ) {
+                self::executePage404( 'Class not found' );
+            } elseif ( !method_exists( $controller, $action ) ) {
+                self::executePage404( 'Action not found' );
             } else {
-                self::executePage404( 'Page require var' );
+
+                $controller = new $controller();
+                if ( !($controller instanceof Controller) ) {
+                    self::executePage404( 'This is Invalid Controller' );
+                } elseif ( self::$_request[ 'vars' ] === NULL ) {
+                    $data = $controller->self::$action();
+                } elseif ( self::hasRequiredParameters( $controller ) ) {
+                    $data = call_user_func_array( array( $controller, $action ), self::$_request[ 'vars' ] );
+                } else {
+                    self::executePage404( 'Page require var' );
+                }
             }
         }
     }
@@ -138,6 +143,15 @@ class Route {
 
         self::$_request[ 'controller' ] = ucfirst( self::$_request[ 'controller' ] ) . 'Controller';
         self::$_request[ 'action' ]     = ucfirst( self::$_request[ 'action' ] ) . 'Action';
+    }
+
+    /**
+     * This method create alias to main class
+     */
+    private static function createAlias() {
+        foreach (self::$confing['alias'] as $namespace => $class){
+            class_alias($namespace, $class);
+        }
     }
 
 }

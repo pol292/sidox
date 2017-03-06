@@ -11,10 +11,10 @@ namespace Sidox\Core;
  */
 interface Path {
 
-    const base        = BASE_PATH;
-    const public_dir  = self::base . 'Public' . DS;
-    const private_dir = self::base . 'Private' . DS;
-    const system = self::private_dir . 'System' . DS;
-    const core = self::system . 'Core' . DS;
-    const app = self::private_dir . 'Application' . DS;
+    const BASE        = BASE_PATH;
+    const PUBLIC_DIR  = self::BASE . 'Public' . DS;
+    const PRIVATE_DIR = self::BASE . 'Private' . DS;
+    const SYSTEM = self::PRIVATE_DIR . 'System' . DS;
+    const CORE = self::SYSTEM . 'Core' . DS;
+    const APP = self::PRIVATE_DIR . 'Application' . DS;
 }
