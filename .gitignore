@@ -1,2 +1,4 @@
 /vendor/
 /nbproject/
+/Private/Application/
+!/Private/Application/README
