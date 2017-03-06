@@ -20,7 +20,7 @@ class Template {
      */
     private static $_instance;
 
-    const PATH = Path::APP . 'Views' . DS . 'Layouts' . DS;
+    const PATH = PATH_APP . 'Views' . DS . 'Layouts' . DS;
 
     /**
      * This method get first template

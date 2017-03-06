@@ -8,6 +8,6 @@ return array(
     'alias' => [
         'Sidox\Core\Controller' => 'Controller',
         'Sidox\Core\View' => 'View',
-        'Sidox\Core\Model' => 'Model'
+        'Sidox\Core\Model' => 'Model',
     ]
 );

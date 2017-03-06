@@ -27,13 +27,14 @@ class Route {
      * @param string $conf Main conf to use
      */
     public static function init( $conf = 'main' ) {
+        session_start();
         // reqiure System conf
-        $sysConf = Path::CORE . '..' . DS . 'Confings' . DS . 'core.conf.php';
+        $sysConf = PATH_SYS . 'Confings' . DS . 'core.conf.php';
         if ( File::exsits( $sysConf ) ) {
             self::$confing = require_once($sysConf);
         }
 
-        $conf = Path::APP . 'Confings' . DS . $conf . '.conf.php';
+        $conf = PATH_APP . 'Confings' . DS . $conf . '.conf.php';
         if ( File::exsits( $conf ) ) {
             self::$confing = array_merge( self::$confing, include_once($conf) );
         }

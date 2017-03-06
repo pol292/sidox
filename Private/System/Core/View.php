@@ -11,13 +11,13 @@ namespace Sidox\Core;
  * @author Pol Bogopolsky <pol292@gmail.com>
  */
 class View {
-  
+
     /**
      * @var Template The template of system
      */
     private static $_template;
 
-    const PATH = Path::APP . 'Views' . DS;
+    const PATH = PATH_APP . 'Views' . DS;
 
     /**
      * This method start a view
@@ -55,7 +55,7 @@ class View {
         $filePath = str_replace( "::", DS, $filePath );
         $filePath = self::PATH . $filePath;
 
-        if ( !is_dir( $filePath ) && file_exists( $filePath ) ) {
+        if ( File::exsits( $filePath ) ) {
             include $filePath;
         }
     }
@@ -81,7 +81,6 @@ class View {
         }
     }
 
-    
     /**
      * This method set page title
      * @param string $title The title of page
@@ -90,5 +89,17 @@ class View {
         self::addVar( 'title', $title );
     }
 
-    
+    public static function redirect( $url ) {
+        if ( strpos( $url, '@' ) ) {
+            $url = self::link( $url );
+        }
+        header( "location: $url" );
+    }
+
+    public static function link( $url, $fullUrl = false ) {
+
+        $url = str_replace( '@', '/', $url );
+        return ($fullUrl ? URL_HOST : '') . URL_SHORT . $url;
+    }
+
 }

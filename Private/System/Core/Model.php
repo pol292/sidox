@@ -12,7 +12,7 @@ namespace Sidox\Core;
  */
 class Model {
 
-    const PATH = Path::APP . "Models" . DS;
+    const PATH = PATH_APP . "Models" . DS;
 
     /**
      * @var array This is array of referance to singelton model
