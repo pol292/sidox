@@ -3,7 +3,7 @@
     "description": "Framework for small projects",
     "type": "Framework",
 	"license": "MIT",
-	"keywords": ["csrf","tokken","security"],
+	"keywords": ["framework"],
     "homepage": "https://github.com/pol292/sidox",
     "authors": [
         {
