@@ -25,8 +25,8 @@ class View {
     public static function init() {
         $template = NULL;
 
-        if ( isset( Route::$confing[ 'defualt' ][ 'layout' ] ) ) {
-            $template = Route::$confing[ 'defualt' ][ 'layout' ];
+        if ( isset( System::$confing[ 'defualt' ][ 'layout' ] ) ) {
+            $template = System::$confing[ 'defualt' ][ 'layout' ];
         }
 
         View::$_template = Template::getTemplate( $template );

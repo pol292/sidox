@@ -11,6 +11,10 @@ namespace Sidox\Core;
  * @author Pol Bogopolsky <pol292@gmail.com>
  */
 class Model {
+    
+    ############################################################################
+    ####                          Static Methods                            ####
+    ############################################################################
 
     const PATH = PATH_APP . "Models" . DS;
 
@@ -27,7 +31,7 @@ class Model {
     public static function load( $model ) {
 
         //TODO: update singelton to multi same name
-        
+
         $modelName = strrpos( $model, "::" );
         if ( isset( $model ) && $modelName > 0 ) {
             $modelName += 2;
@@ -48,5 +52,17 @@ class Model {
             }
         }
     }
+    
+    
+    ############################################################################
+    ####                          Object Methods                            ####
+    ############################################################################
 
+    private $_link;
+
+
+    public function __construct() {
+        $this->_link = DB::connect();
+    }
+    
 }

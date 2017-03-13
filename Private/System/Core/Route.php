@@ -11,39 +11,21 @@ namespace Sidox\Core;
  * @author Pol Bogopolsky <pol292@gmail.com>
  */
 class Route {
-
-    /**
-     * @var Array This is the config of system 
-     */
-    public static $confing = array();
-
     /**
      * @var Array This array save excuted url to controller & action & vars 
      */
     private static $_request = array();
 
     /**
-     * This method start running the system
+     * This method init route
      * @param string $conf Main conf to use
      */
-    public static function init( $conf = 'main' ) {
-        session_start();
-        // reqiure System conf
-        $sysConf = PATH_SYS . 'Confings' . DS . 'core.conf.php';
-        if ( File::exsits( $sysConf ) ) {
-            self::$confing = require_once($sysConf);
-        }
-
-        $conf = PATH_APP . 'Confings' . DS . $conf . '.conf.php';
-        if ( File::exsits( $conf ) ) {
-            self::$confing = array_merge( self::$confing, include_once($conf) );
-        }
-
-
+    public static function init() {
+        
         self::cutUrl();
         self::createRouter();
-        self::createAlias();
         self::executeController();
+        
     }
 
     /**
@@ -102,7 +84,7 @@ class Route {
         if ( isset( $_GET[ 'url' ] ) ) {
             //TODO: Check hack url
             $url = $_GET[ 'url' ];
-            $url = htmlspecialchars( $url, ENT_QUOTES );
+            $url = htmlentities( $url, ENT_QUOTES );
             $url = trim( $url, "/" );
             $url = preg_replace( '/\/+/', '/', $url );
 
@@ -133,26 +115,17 @@ class Route {
 
 
         if ( empty( self::$_request[ 'action' ] ) ) {
-            self::$_request[ 'action' ] = self::$confing[ 'defualt' ][ 'action' ];
+            self::$_request[ 'action' ] = System::$confing[ 'defualt' ][ 'action' ];
         }
 
 
         if ( empty( self::$_request[ 'controller' ] ) ) {
-            self::$_request[ 'controller' ] = self::$confing[ 'defualt' ][ 'controller' ];
+            self::$_request[ 'controller' ] = System::$confing[ 'defualt' ][ 'controller' ];
         }
 
 
         self::$_request[ 'controller' ] = ucfirst( self::$_request[ 'controller' ] ) . 'Controller';
         self::$_request[ 'action' ]     = ucfirst( self::$_request[ 'action' ] ) . 'Action';
-    }
-
-    /**
-     * This method create alias to main class
-     */
-    private static function createAlias() {
-        foreach (self::$confing['alias'] as $namespace => $class){
-            class_alias($namespace, $class);
-        }
     }
 
 }

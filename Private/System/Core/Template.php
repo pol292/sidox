@@ -1,13 +1,12 @@
 <?php
 
 namespace Sidox\Core;
-
 /**
  * *****************************************
  *               Class Template            *
  * This class load main template of system *
  * *****************************************
- * @version 06/03/2017
+ * @version 13/03/2017
  * @author Pol Bogopolsky <pol292@gmail.com>
  */
 class Template {
@@ -55,8 +54,8 @@ class Template {
 
         if ( $layout !== null ) {
             $template = $layout;
-        } elseif ( isset( Route::$confing[ 'defualt' ][ 'layout' ] ) ) {
-            $template = Route::$confing[ 'defualt' ][ 'layout' ];
+        } elseif ( isset( System::$confing[ 'defualt' ][ 'layout' ] ) ) {
+            $template = System::$confing[ 'defualt' ][ 'layout' ];
         }
         $template = File::shortLoad( $template );
 
@@ -104,8 +103,8 @@ class Template {
      * @return string New content
      */
     private function replaceTemplate( $content ) {
-        $openTag  = Route::$confing[ 'setting' ][ 'varOpenTag' ];
-        $closeTag = Route::$confing[ 'setting' ][ 'varCloseTag' ];
+        $openTag  = System::$confing[ 'setting' ][ 'varOpenTag' ];
+        $closeTag = System::$confing[ 'setting' ][ 'varCloseTag' ];
         foreach ( $this->_vars as $key => $value ) {
             $content = str_replace( $openTag . $key . $closeTag, $value, $content );
         }
@@ -141,7 +140,10 @@ class Template {
 
         if ( !is_dir( $layout ) && file_exists( $layout ) ) {
             $this->content = $content;
-            $content       = file_get_contents( $layout );
+            ob_end_clean();
+            include $layout;
+            $content = ob_get_contents();
+//            $content       = file_get_contents( $layout );
         }
 
 
@@ -150,6 +152,7 @@ class Template {
         ob_end_clean();
 
         echo $content;
+        DB::close_connection();
     }
 
 }
