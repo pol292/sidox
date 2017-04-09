@@ -13,7 +13,8 @@
     ],
 	"autoload": {
         "psr-4": {
-            "Sidox\\Core\\": "Private/System/Core"
+            "Sidox\\Core\\": "Private/System/Core",
+			"App\\": "Private/Application"
         }
     },
     "require": {}

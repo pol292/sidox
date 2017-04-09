@@ -11,6 +11,7 @@ namespace Sidox\Core;
  * @author Pol Bogopolsky <pol292@gmail.com>
  */
 class Route {
+
     /**
      * @var Array This array save excuted url to controller & action & vars 
      */
@@ -21,11 +22,10 @@ class Route {
      * @param string $conf Main conf to use
      */
     public static function init() {
-        
+
         self::cutUrl();
         self::createRouter();
         self::executeController();
-        
     }
 
     /**
@@ -36,30 +36,28 @@ class Route {
      */
     private static function executeController() {
 
-        $controller     = self::$_request[ 'controller' ];
-        $action         = self::$_request[ 'action' ];
+        $controller     = &self::$_request[ 'controller' ];
+        $action         = &self::$_request[ 'action' ];
         $controllerFile = Controller::PATH . $controller . '.php';
 
 
         if ( File::notExsits( $controllerFile ) ) {
-            self::executePage404( 'Controller File not found' );
+            self::error404( 'Controller File not found' );
         } else {
             require $controllerFile;
             if ( !class_exists( $controller ) ) {
-                self::executePage404( 'Class not found' );
+                self::error404( 'Class not found' );
             } elseif ( !method_exists( $controller, $action ) ) {
-                self::executePage404( 'Action not found' );
+                self::error404( 'Action not found' );
             } else {
 
-                $controller = new $controller();
-                if ( !($controller instanceof Controller) ) {
-                    self::executePage404( 'This is Invalid Controller' );
-                } elseif ( self::$_request[ 'vars' ] === NULL ) {
-                    $data = $controller->self::$action();
-                } elseif ( self::hasRequiredParameters( $controller ) ) {
-                    $data = call_user_func_array( array( $controller, $action ), self::$_request[ 'vars' ] );
+                $controllerObj = new $controller();
+                if ( !($controllerObj instanceof Controller) ) {
+                    self::error404( 'This is Invalid Controller' );
+                } elseif ( self::hasRequiredParameters( $controllerObj ) ) {
+                    call_user_func_array( array( $controllerObj, $action ), self::$_request[ 'vars' ] );
                 } else {
-                    self::executePage404( 'Page require var' );
+                    self::error404( 'Page require var' );
                 }
             }
         }
@@ -71,8 +69,20 @@ class Route {
         return sizeof( self::$_request[ 'vars' ] ) >= $method->getNumberOfRequiredParameters();
     }
 
-    private static function executePage404( $err ) {
-        echo '404 error: <br>' . $err;
+    private static function error404( $err ) {
+        $errorCon = System::getConf( 'settings' )[ 'error_controller' ];
+        $file = Controller::PATH . 'PageErrorController.php';
+        if ( File::exsits( $file ) ) {
+            require_once $file;
+            if ( class_exists( $errorCon ) ) {
+                $pageNotFound = new $errorCon();
+                self::$_request[ 'controller' ] = $errorCon;
+                $pageNotFound->Err404( [ 'error' => $err ] );
+            }
+        } else {
+            View::redirect( './' );
+        }
+        die();
     }
 
     /**
@@ -81,25 +91,28 @@ class Route {
      * @pravite
      */
     private static function cutUrl() {
-        if ( isset( $_GET[ 'url' ] ) ) {
-            //TODO: Check hack url
-            $url = $_GET[ 'url' ];
-            $url = htmlentities( $url, ENT_QUOTES );
-            $url = trim( $url, "/" );
-            $url = preg_replace( '/\/+/', '/', $url );
+        $url = filter_input( INPUT_GET, 'url', FILTER_SANITIZE_STRING );
+        if ( $url ) {
+            $mechin = System::getConf( 'settings' )[ 'mechin_name' ];
+            $url    = htmlentities( $url, ENT_QUOTES );
 
+            $url = trim( $url );
+            $url = trim( $url, $mechin );
+            $url = trim( $url );
+
+            $url        = preg_replace( "/$mechin+/", $mechin, $url );
+            $url        = strtolower( $url );
             // next code add slash for url for explode it
-            $selshCount = substr_count( $url, '/' );
+            $selshCount = substr_count( $url, $mechin );
             if ( $selshCount < 2 ) {
                 $add = -($selshCount - 2);
-                $url .= str_repeat( "/", $add );
+                $url .= str_repeat( $mechin, $add );
             }
-
 
             // cut $url to array in self::request
             list(self::$_request[ 'controller' ],
                     self::$_request[ 'action' ],
-                    self::$_request[ 'vars' ]) = explode( '/', $url, 3 );
+                    self::$_request[ 'vars' ]) = explode( $mechin, $url, 3 );
         }
     }
 
@@ -110,22 +123,34 @@ class Route {
         if ( empty( self::$_request[ 'vars' ] ) ) {
             self::$_request[ 'vars' ] = array();
         } else {
-            self::$_request[ 'vars' ] = explode( '/', self::$_request[ 'vars' ] );
+            $mechin                   = System::getConf( 'settings' )[ 'mechin_name' ];
+            self::$_request[ 'vars' ] = explode( $mechin, self::$_request[ 'vars' ] );
         }
 
-
+        $conf = System::getConf( 'defualt' );
         if ( empty( self::$_request[ 'action' ] ) ) {
-            self::$_request[ 'action' ] = System::$confing[ 'defualt' ][ 'action' ];
+            self::$_request[ 'action' ] = &$conf[ 'action' ];
         }
-
 
         if ( empty( self::$_request[ 'controller' ] ) ) {
-            self::$_request[ 'controller' ] = System::$confing[ 'defualt' ][ 'controller' ];
+            self::$_request[ 'controller' ] = &$conf[ 'controller' ];
         }
 
 
         self::$_request[ 'controller' ] = ucfirst( self::$_request[ 'controller' ] ) . 'Controller';
         self::$_request[ 'action' ]     = ucfirst( self::$_request[ 'action' ] ) . 'Action';
+    }
+
+    public static function getController() {
+        return self::$_request[ 'controller' ];
+    }
+
+    public static function getAction() {
+        return self::$_request[ 'action' ];
+    }
+
+    public static function getVars() {
+        return self::$_request[ 'vars' ];
     }
 
 }

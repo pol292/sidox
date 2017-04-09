@@ -11,7 +11,6 @@ namespace Sidox\Core;
  * @author Pol Bogopolsky <pol292@gmail.com>
  */
 class Model {
-    
     ############################################################################
     ####                          Static Methods                            ####
     ############################################################################
@@ -30,39 +29,32 @@ class Model {
      */
     public static function load( $model ) {
 
-        //TODO: update singelton to multi same name
 
-        $modelName = strrpos( $model, "::" );
-        if ( isset( $model ) && $modelName > 0 ) {
-            $modelName += 2;
-        }
-        $modelName = substr( $model, $modelName );
-        if ( isset( self::$_modelInstance[ $modelName ] ) ) {
-            return self::$_modelInstance[ $modelName ];
+        if ( isset( self::$_modelInstance[ $model ] ) ) {
+            return self::$_modelInstance[ $model ];
         } else {
+            $modelPath = self::PATH . $model;
+            File::shortLoad( $modelPath );
+            if ( File::exsits( $modelPath ) ) {
+                require_once $modelPath;
 
-            $filePath = File::shortLoad( $model );
-            $filePath = self::PATH . $filePath;
+                $modelName = strrpos( $model, "::" );
+                if ( $modelName > 0 ) {
+                    $modelName += 2;
+                }
+                $modelName = substr( $model, $modelName );
 
-            if ( File::exsits( $filePath ) ) {
-                require_once $filePath;
-                $model                              = new $modelName();
-                self::$_modelInstance[ $modelName ] = $model;
-                return $model;
+                $modelInstance                          = new $modelName();
+                self::$_modelInstance[ $model ] = $modelInstance;
+                return $modelInstance;
             }
         }
     }
-    
-    
+
     ############################################################################
     ####                          Object Methods                            ####
     ############################################################################
 
-    private $_link;
-
-
-    public function __construct() {
-        $this->_link = DB::connect();
-    }
     
+
 }

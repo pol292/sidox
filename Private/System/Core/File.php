@@ -35,12 +35,12 @@ class File {
      * @param type $fileName The path to load
      * @return string The file name to load
      */
-    public static function shortLoad( &$fileName ) {
+    public static function shortLoad( &$fileName, $type = '.php' ) {
         $fileName = str_replace( "::", DS, $fileName );
-        //TODO: check extenstion
-        if ( !strpos ( $fileName , '.') ) {
-            $fileName .= '.php';
+
+        if ( !strpos( $fileName, $type )) {
+            $fileName .= $type;
         }
-        return $fileName;
     }
+
 }
