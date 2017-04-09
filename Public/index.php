@@ -15,4 +15,4 @@ defined( 'URL_SHORT' ) or define( 'URL_SHORT', substr( $url, 0, -7 ) );
 unset( $url );
 
 require_once PATH_BASE . 'vendor' . DS . 'autoload.php';
-Sidox\Core\Route::init( 'main' );
+Sidox\Core\Route::System( 'main' );
